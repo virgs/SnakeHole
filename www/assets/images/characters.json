@@ -1,0 +1,20 @@
+{
+  "key": "characters",
+  "objects": [
+    "mole",
+    "star",
+    "rabbit"
+  ],
+  "animations": {
+    "alive": true,
+    "hit": false,
+    "miss": false,
+    "raise": false
+  },
+  "framesPerAnimation": 8,
+  "filename": "./assets/images/characters.png",
+  "dimensions": {
+    "frameWidth": 90,
+    "frameHeight": 90
+  }
+}

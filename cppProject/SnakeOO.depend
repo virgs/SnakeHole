@@ -1,0 +1,33 @@
+# depslib dependency file v1.0
+1289864163 source:c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\main.cpp
+	<allegro.h>
+	"Jogo.h"
+
+1290198722 source:c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\snake.cpp
+	"Snake.h"
+
+1290198401 c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\snake.h
+	<allegro.h>
+	<list>
+	"Cenario.h"
+	"Jogo.h"
+
+1289863970 source:c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\cenario.cpp
+	"Cenario.h"
+	"Jogo.h"
+	<time.h>
+	<stdio.h>
+
+1289841175 c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\cenario.h
+	<allegro.h>
+	<list>
+
+1290198673 source:c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\jogo.cpp
+	"Jogo.h"
+	<allegro.h>
+
+1290198523 c:\documents and settings\usuario\meus documentos\gui\programas\codeblocks 10\projetos\snakeoo\jogo.h
+	"Cenario.h"
+	"Snake.h"
+	<time.h>
+
