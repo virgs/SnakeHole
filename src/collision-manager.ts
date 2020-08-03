@@ -1,11 +1,12 @@
 import {Events} from './event-manager/events';
 import {EventManager} from './event-manager/event-manager';
 
+//TODO remove this class
 export class CollisionManager {
     private scene: Phaser.Scene;
     private walls: Phaser.Geom.Point[];
     private foodPosition: Phaser.Geom.Point;
-    private holes: Phaser.Geom.Point[][] = []
+    private holes: Phaser.Geom.Point[][] = [];
 
     constructor(options: { walls: Phaser.Geom.Point[], scene: Phaser.Scene }) {
         this.walls = options.walls;
@@ -35,8 +36,8 @@ export class CollisionManager {
                         if (hole.x === snakeHeadPosition.x && hole.y === snakeHeadPosition.y) {
                             EventManager.emit(Events.SNAKE_ENTERED_HOLE, holes[1 - index]);
                         }
-                    })
-                })
+                    });
+                });
         });
 
     }

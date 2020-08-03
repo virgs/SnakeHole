@@ -7,12 +7,14 @@ import {SnakeHole} from '../actors/snake-hole';
 import {SoundManager} from '../sound/sound-manager';
 import {UrlQueryHandler} from '../url-query-handler';
 import {CollisionManager} from '../collision-manager';
-import {ScoreController} from "../score/score-controller";
+import {ScoreController} from '../score/score-controller';
 import {EventManager} from '../event-manager/event-manager';
 import Point = Phaser.Geom.Point;
 import KeyCodes = Phaser.Input.Keyboard.KeyCodes;
 
 export class MainScene extends Phaser.Scene {
+    private static readonly SWIPE_THRESHOLD = 50;
+
     private snake: Snake;
     private levelMap: LevelMap;
     private gameRunning: boolean;
@@ -50,7 +52,11 @@ export class MainScene extends Phaser.Scene {
         this.holes = new UrlQueryHandler().getParameterByName('holes',
             '12,13,20,16;0,0,18,18')
             .split(';')
-            .map((point, index) => new SnakeHole({index, scene: this, points: point.split(',').map(coordinate => +coordinate)}));
+            .map((point, index) => new SnakeHole({
+                index,
+                scene: this,
+                points: point.split(',').map(coordinate => +coordinate)
+            }));
         this.snake = new Snake({initialPosition: snakeInitialPosition, mapDimension: mapDimension, scene: this});
         this.soundManager = new SoundManager(this);
 
@@ -74,6 +80,20 @@ export class MainScene extends Phaser.Scene {
             {direction: Direction.Down, keyCode: this.input.keyboard.addKey(KeyCodes.DOWN)},
             {direction: Direction.Right, keyCode: this.input.keyboard.addKey(KeyCodes.RIGHT)}
         ];
+
+        this.input.on('pointerup', (pointer: any) => {
+            const xDifference = pointer.upX - pointer.downX;
+            const yDifference = pointer.upY - pointer.downY;
+            if (xDifference < -MainScene.SWIPE_THRESHOLD) {
+                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Left);
+            } else if (xDifference > MainScene.SWIPE_THRESHOLD) {
+                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Right);
+            } else if (yDifference < -MainScene.SWIPE_THRESHOLD) {
+                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Up);
+            } else if (yDifference > MainScene.SWIPE_THRESHOLD) {
+                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Down);
+            }
+        });
     }
 
     public update(time: number, delta: number): void {
@@ -88,7 +108,6 @@ export class MainScene extends Phaser.Scene {
         EventManager.destroy();
         this.snake.destroy();
         this.levelMap.destroy();
-        this.scoreController.destroy();
         this.holes.forEach(hole => hole.destroy());
     }
 

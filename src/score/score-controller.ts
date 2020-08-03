@@ -8,8 +8,4 @@ export class ScoreController {
         EventManager.on(Events.SNAKE_ATE, () => ++this.score);
         EventManager.on(Events.SNAKE_DIED, () => EventManager.emit(Events.GAME_OVER, this.score));
     }
-
-    public destroy() {
-
-    }
 }
