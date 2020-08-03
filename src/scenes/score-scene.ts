@@ -1,7 +1,6 @@
 export class ScoreScene extends Phaser.Scene {
     private static readonly MIN_WAITING_TIME_MS = 1000;
     private lastScore: number | string;
-    private maxScore: number;
 
     constructor() {
         super({
@@ -11,24 +10,19 @@ export class ScoreScene extends Phaser.Scene {
 
     public create(value: { score: number }) {
         this.lastScore = value ? value.score || '-' : '-';
-        this.maxScore = Number(localStorage.getItem('maxScore'));
-        if (this.lastScore > this.maxScore) {
-            localStorage.setItem('maxScore', this.lastScore.toString());
-            this.maxScore = Number(this.lastScore);
-        }
         this.addBackground();
         this.addScoreBoard();
     }
 
     private addScoreBoard() {
         const scoreTitle = this.add.bitmapText(this.game.renderer.width * 0.05, this.game.renderer.height * 0.35,
-            'scoreFont', `SCORE:\r\n\r\nMAX:`, 60, 0);
+            'scoreFont', `SCORE:`, 40, 0);
         scoreTitle.setTintFill(0xb6b600);
         const titleScaleRatio = window.innerWidth * 0.35 / scoreTitle.getTextBounds().global.width;
         scoreTitle.setScale(titleScaleRatio, titleScaleRatio);
 
         const scoreText = this.add.bitmapText(this.game.renderer.width * 0.95, this.game.renderer.height * 0.35,
-            'scoreFont', `${this.lastScore}\r\n\r\n${this.maxScore}`, 60, 2);
+            'scoreFont', `${this.lastScore}`, 40, 2);
         scoreText.setOrigin(1, 0);
         scoreText.setTintFill(0xb6b600);
         scoreText.setScale(titleScaleRatio, titleScaleRatio);

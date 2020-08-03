@@ -16,7 +16,7 @@ export class Snake {
     private readonly mapDimension: Phaser.Geom.Point;
     private readonly body: SnakeBodyElement[] = [];
 
-    private milliSecondsPerTile: number = 125;
+    private milliSecondsPerTile: number = 175;
     private increaseLength: number = initialLength;
     private updateTimeCounter: number = 0;
     private currentDirection: Direction = Direction.Right;
@@ -56,6 +56,13 @@ export class Snake {
             this.increaseBodyLength();
             this.decreaseBodyLength();
             EventManager.emit(Events.SNAKE_MOVED, this.body.map(item => item.point));
+
+            const head = this.body[0];
+            if (this.body
+                .filter((_, index) => index > 0)
+                .find(bodyItem => bodyItem.point.y === head.point.y && bodyItem.point.x === head.point.x)) {
+                EventManager.emit(Events.SNAKE_COLLIDED_WITH_ITSELF);
+            }
             this.currentDirection = this.nextDirection;
         }
     }

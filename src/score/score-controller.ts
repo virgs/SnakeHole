@@ -6,6 +6,8 @@ export class ScoreController {
 
     public constructor() {
         EventManager.on(Events.SNAKE_ATE, () => ++this.score);
-        EventManager.on(Events.SNAKE_DIED, () => EventManager.emit(Events.GAME_OVER, this.score));
+        const gameOverLambda = () => EventManager.emit(Events.GAME_OVER, this.score);
+        EventManager.on(Events.SNAKE_COLLIDED_WITH_ITSELF, gameOverLambda);
+        EventManager.on(Events.SNAKE_COLLIDED_WITH_WALL, gameOverLambda);
     }
 }

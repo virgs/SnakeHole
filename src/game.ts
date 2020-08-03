@@ -7,7 +7,7 @@ import {ScoreScene} from './scenes/score-scene';
 import {SplashScene} from './scenes/splash-scene';
 import {UrlQueryHandler} from './url-query-handler';
 
-const [dimensionWidth, dimensionHeight] = new UrlQueryHandler().getParameterByName('levelDimension', '50,50').split(',');
+const [dimensionWidth, dimensionHeight] = new UrlQueryHandler().getParameterByName('levelDimension', '25,25').split(',');
 const config: GameConfig = {
     width: dimensionWidth * scale,
     height: dimensionHeight * scale,

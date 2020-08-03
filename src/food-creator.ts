@@ -10,6 +10,7 @@ export class FoodCreator {
     private snakeBody: Phaser.Geom.Point[];
     private sprite: Phaser.GameObjects.Sprite;
     private snakeHoles: SnakeHole[];
+    private foodPosition: Phaser.Geom.Point;
 
     public constructor(options: {
         scene: Phaser.Scene,
@@ -22,8 +23,14 @@ export class FoodCreator {
         this.walls = options.walls;
         this.snakeBody = [options.snakeInitialPosition];
         this.createFood();
-        EventManager.on(Events.SNAKE_MOVED, body => this.snakeBody = body);
-        EventManager.on(Events.SNAKE_ATE, () => this.createFood());
+        EventManager.on(Events.SNAKE_MOVED, body => {
+            const snakeHeadPosition = body[0];
+            this.snakeBody = body;
+            if (this.foodPosition && snakeHeadPosition.x === this.foodPosition.x && snakeHeadPosition.y === this.foodPosition.y) {
+                EventManager.emit(Events.SNAKE_ATE);
+                this.createFood();
+            }
+        });
     }
 
     private createFood() {
@@ -35,7 +42,8 @@ export class FoodCreator {
         if (this.walls.find(item => item.x === x && item.y === y)) {
             return this.createFood();
         }
-        EventManager.emit(Events.FOOD_CREATED, new Phaser.Geom.Point(x, y));
+        this.foodPosition = new Phaser.Geom.Point(x, y);
+        EventManager.emit(Events.FOOD_CREATED, this.foodPosition);
         if (this.sprite) {
             this.sprite.destroy();
         }

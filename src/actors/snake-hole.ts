@@ -20,6 +20,14 @@ export class SnakeHole {
 
             });
         EventManager.emit(Events.SNAKE_HOLE_CREATION, points);
+        EventManager.on(Events.SNAKE_MOVED, (snakeBody: Phaser.Geom.Point[]) => {
+            const snakeHeadPosition = snakeBody[0];
+            points.find((hole, index) => {
+                if (hole.x === snakeHeadPosition.x && hole.y === snakeHeadPosition.y) {
+                    EventManager.emit(Events.SNAKE_ENTERED_HOLE, points[1 - index]);
+                }
+            });
+        });
     }
 
     public destroy() {
