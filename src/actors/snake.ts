@@ -40,9 +40,43 @@ export class Snake {
         });
         EventManager.on(Events.SNAKE_ATE, () => ++this.increaseLength);
         EventManager.on(Events.MILLISECONDS_PER_TILE_CHANGED, (tilesPerSecond: number) => this.milliSecondsPerTile = tilesPerSecond);
-        EventManager.on(Events.SNAKE_DIRECTION_CHANGED, (nextDirection: Direction) => {
-            if ((this.currentDirection + nextDirection) % 2 !== 0) {
-                this.nextDirection = nextDirection;
+        EventManager.on(Events.SNAKE_DIRECTION_CHANGED, (directions: Direction[]) => {
+            if (directions.length === 1) {
+                const nextDirection = directions[0];
+                if ((this.currentDirection + nextDirection) % 2 !== 0) {
+                    this.nextDirection = nextDirection;
+                }
+            } else if (directions.length === 2) {
+                switch (this.currentDirection) {
+                    case Direction.Up:
+                        if (directions.includes(Direction.Left)) {
+                            this.nextDirection = Direction.Left;
+                        } else if (directions.includes(Direction.Right)) {
+                            this.nextDirection = Direction.Right;
+                        }
+                        break;
+                    case Direction.Right:
+                        if (directions.includes(Direction.Up)) {
+                            this.nextDirection = Direction.Up;
+                        } else if (directions.includes(Direction.Down)) {
+                            this.nextDirection = Direction.Down;
+                        }
+                        break;
+                    case Direction.Down:
+                        if (directions.includes(Direction.Left)) {
+                            this.nextDirection = Direction.Left;
+                        } else if (directions.includes(Direction.Right)) {
+                            this.nextDirection = Direction.Right;
+                        }
+                        break;
+                    case Direction.Left:
+                        if (directions.includes(Direction.Up)) {
+                            this.nextDirection = Direction.Up;
+                        } else if (directions.includes(Direction.Down)) {
+                            this.nextDirection = Direction.Down;
+                        }
+                        break;
+                }
             }
         });
     }

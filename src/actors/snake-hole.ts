@@ -4,7 +4,6 @@ import {EventManager} from '../event-manager/event-manager';
 import Point = Phaser.Geom.Point;
 
 export class SnakeHole {
-    private static readonly colors: number[] = [0xb6b600, 0xb60000, 0x0000b6];
     private readonly sprites: Phaser.GameObjects.Sprite[] = [];
 
     public constructor(options: { scene: Phaser.Scene, points: number[], index: number }) {

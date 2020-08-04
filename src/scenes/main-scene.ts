@@ -1,7 +1,7 @@
 import {Snake} from '../actors/snake';
-import {Direction} from '../direction';
 import {FoodCreator} from '../food-creator';
 import {LevelMap} from '../actors/level-map';
+import {InputManager} from '../input-manager';
 import {Events} from '../event-manager/events';
 import {SnakeHole} from '../actors/snake-hole';
 import {SoundManager} from '../sound/sound-manager';
@@ -9,19 +9,17 @@ import {UrlQueryHandler} from '../url-query-handler';
 import {ScoreController} from '../score/score-controller';
 import {EventManager} from '../event-manager/event-manager';
 import Point = Phaser.Geom.Point;
-import KeyCodes = Phaser.Input.Keyboard.KeyCodes;
 
 export class MainScene extends Phaser.Scene {
-    private static readonly SWIPE_THRESHOLD = 30;
 
     private snake: Snake;
     private levelMap: LevelMap;
     private gameRunning: boolean;
     private foodCreator: FoodCreator;
     private soundManager: SoundManager;
-    private keyboardInput: { keyCode: Phaser.Input.Keyboard.Key; direction: Direction }[];
     private holes: SnakeHole[];
     private scoreController: ScoreController;
+    private inputManager: InputManager;
 
     constructor() {
         super({
@@ -30,7 +28,6 @@ export class MainScene extends Phaser.Scene {
     }
 
     public async create(): Promise<void> {
-        this.registerInputEvents();
         const [dimensionWidth, dimensionHeight] = new UrlQueryHandler()
             .getParameterByName('levelDimension', '25,25').split(',');
         const snakeInitialPosition = new Point(...new UrlQueryHandler()
@@ -60,6 +57,7 @@ export class MainScene extends Phaser.Scene {
                 points: point.split(',').map(coordinate => +coordinate)
             }));
         this.snake = new Snake({initialPosition: snakeInitialPosition, mapDimension: mapDimension, scene: this});
+        this.inputManager = new InputManager({scene: this, mapDimension});
         this.soundManager = new SoundManager(this);
 
         EventManager.emit(Events.GAME_BEGAN);
@@ -72,34 +70,11 @@ export class MainScene extends Phaser.Scene {
         });
     }
 
-    private registerInputEvents() {
-        this.keyboardInput = [
-            {direction: Direction.Up, keyCode: this.input.keyboard.addKey(KeyCodes.UP)},
-            {direction: Direction.Left, keyCode: this.input.keyboard.addKey(KeyCodes.LEFT)},
-            {direction: Direction.Down, keyCode: this.input.keyboard.addKey(KeyCodes.DOWN)},
-            {direction: Direction.Right, keyCode: this.input.keyboard.addKey(KeyCodes.RIGHT)}
-        ];
-
-        this.input.on('pointerup', (pointer: any) => {
-            const xDifference = pointer.upX - pointer.downX;
-            const yDifference = pointer.upY - pointer.downY;
-            if (xDifference < -MainScene.SWIPE_THRESHOLD) {
-                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Left);
-            } else if (xDifference > MainScene.SWIPE_THRESHOLD) {
-                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Right);
-            } else if (yDifference < -MainScene.SWIPE_THRESHOLD) {
-                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Up);
-            } else if (yDifference > MainScene.SWIPE_THRESHOLD) {
-                EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, Direction.Down);
-            }
-        });
-    }
-
     public update(time: number, delta: number): void {
         if (this.gameRunning) {
-            this.snake.update(delta);
-            this.soundManager.update();
-            this.checkInputEvents();
+            this.snake &&this.snake.update(delta);
+            this.soundManager && this.soundManager.update();
+            this.inputManager && this.inputManager.update();
         }
     }
 
@@ -107,12 +82,8 @@ export class MainScene extends Phaser.Scene {
         EventManager.destroy();
         this.snake.destroy();
         this.levelMap.destroy();
+        this.inputManager.destroy();
         this.holes.forEach(hole => hole.destroy());
     }
 
-    private checkInputEvents() {
-        this.keyboardInput
-            .filter(key => key.keyCode.isDown)
-            .forEach(key => EventManager.emit(Events.SNAKE_DIRECTION_CHANGED, key.direction));
-    }
 }
